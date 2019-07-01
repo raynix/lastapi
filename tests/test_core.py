@@ -19,7 +19,10 @@ class TestApiCore(unittest.TestCase):
       'key2': { 'param1': 'testasdf'},
       'key3': [ 'alpha', 'beta', 'theta' ]
     }
-    self.assertEqual(traverse_schema(test_schema, test_params), assert_schema)
+    sn = traverse_schema(test_schema, test_params)
+    self.assertEqual(sn.key1, assert_schema['key1'])
+    self.assertEqual(sn.key2.param1, 'testasdf')
+    self.assertEqual(sn.key3[2], 'theta')
 
 if __name__ == '__main__':
   unittest.main()
