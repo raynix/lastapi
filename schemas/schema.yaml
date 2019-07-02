@@ -1,0 +1,40 @@
+---
+name: API schema
+desc: schema test with kwalify
+type: map
+mapping:
+  Name:
+    type: str
+  Protocol:
+    type: str
+    required: true
+  Host:
+    type: str
+    required: true
+  Headers:
+    type: seq
+    sequence:
+      - type: map
+        mapping:
+          re;(.*):
+            type: str
+  Actions:
+    type: seq
+    sequence:
+      - type: map
+        mapping:
+          Name:
+            type: str
+          Path:
+            type: str
+          Method:
+            type: str
+          Payload:
+            type: map
+            mapping:
+              re;(.*):
+                type: str
+              ttl:
+                type: int
+              proxied:
+                type: bool
