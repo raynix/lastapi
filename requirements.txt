@@ -1,3 +1,3 @@
-requests
-yaml
-pykawlify
+requests>=2.21
+pyyaml>=3.13
+pykwalify>=1.7
