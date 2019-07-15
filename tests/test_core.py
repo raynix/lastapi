@@ -24,5 +24,10 @@ class TestApiCore(unittest.TestCase):
     self.assertEqual(sn.key2.param1, assert_schema['key2']['param1'])
     self.assertEqual(sn.key3[2], assert_schema['key3'][2])
 
+  def test_httpbin(self):
+    httpbin = LastApi('schemas/httpbin')
+    response = httpbin.invoke_api('test_post', { 'path': 'test', 'type': 'beta'})
+    print(response.content)
+
 if __name__ == '__main__':
   unittest.main()

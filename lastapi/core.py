@@ -5,15 +5,18 @@ import re
 from types import SimpleNamespace
 from pykwalify.core import Core
 
+class MySimpleNamespace(SimpleNamespace):
+  def dict(self):
+    return self.__dict__
+
 GLOBAL_PARAMETER_PATTERN = re.compile('(\$\{([^\}]+)\})')
-ARGUMENTS_PATTERN = re.compile('(\#\{([^\}]+)\})')
 # schema is a dict object reading from yaml
 def traverse_schema(schema, pattern, params={}):
   if isinstance(schema, dict):
     processed_schema = {}
     for key, value in schema.items():
       processed_schema[key] = traverse_schema(value, pattern, params)
-    return SimpleNamespace(**processed_schema)
+    return MySimpleNamespace(**processed_schema)
 
   elif isinstance(schema, list):
     return [ traverse_schema(v, pattern, params) for v in schema ]
@@ -49,10 +52,25 @@ class LastApi:
     with open(api_definition_file, 'r') as fp:
       self.schema = yaml.load(fp)
     self.headers = traverse_schema(self.schema['Headers'], GLOBAL_PARAMETER_PATTERN, params)
+    self.base = traverse_schema(self.schema['Base'], GLOBAL_PARAMETER_PATTERN, params)
 
-  def invoke(self, action_name, params):
-    pass
-
+  def invoke_api(self, action_name, params):
+    action = traverse_schema(self.schema['Actions'][action_name], GLOBAL_PARAMETER_PATTERN, params)
+    if self.headers.dict()['Content-Type'] == 'application/json':
+      response = requests.request(
+        method=action.Method,
+        url="{0}://{1}{2}".format(self.base.Protocol, self.base.Host, ''.join(action.Path)),
+        headers=self.headers.dict(),
+        json=action.Payload.dict()
+      )
+    else:
+      response = requests.request(
+        method=action.Method,
+        url="{0}://{1}{2}".format(self.base.Protocol, self.base.Host, ''.join(action.Path)),
+        headers=self.headers.dict(),
+        data=action.Payload.dict()
+      )
+    return response
 """
   curl -X PUT $CFAPI/zones/$1/dns_records/$2 \
     -H "X-Auth-Key: $CFKEY" \
