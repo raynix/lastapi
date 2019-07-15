@@ -5,19 +5,20 @@ type: map
 mapping:
   Name:
     type: str
-  Protocol:
-    type: str
-    required: true
-  Host:
-    type: str
-    required: true
+  Base:
+    type: map
+    mapping:
+      Protocol:
+        type: str
+        required: true
+      Host:
+        type: str
+        required: true
   Headers:
-    type: seq
-    sequence:
-      - type: map
-        mapping:
-          re;(.*):
-            type: str
+    type: map
+    mapping:
+      re;(.*):
+        type: str
   Actions:
     type: map
     mapping:
