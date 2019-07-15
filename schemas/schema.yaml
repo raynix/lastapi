@@ -19,14 +19,15 @@ mapping:
           re;(.*):
             type: str
   Actions:
-    type: seq
-    sequence:
-      - type: map
+    type: map
+    mapping:
+      re;(.*):
+        type: map
         mapping:
-          Name:
-            type: str
           Path:
-            type: str
+            type: seq
+            sequence:
+              - type: str
           Method:
             type: str
           Payload:
