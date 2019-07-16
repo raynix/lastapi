@@ -1,6 +1,7 @@
 import yaml
 import requests
 import re
+import os, sys
 
 from types import SimpleNamespace
 from pykwalify.core import Core
@@ -8,6 +9,18 @@ from pykwalify.core import Core
 class MySimpleNamespace(SimpleNamespace):
   def dict(self):
     return self.__dict__
+
+def determine_path():
+  """Borrowed from wxglade.py"""
+  try:
+    root = __file__
+    if os.path.islink(root):
+        root = os.path.realpath(root)
+    return os.path.dirname(os.path.abspath (root))
+  except:
+    print( "I'm sorry, but something is wrong.")
+    print( "There is no __file__ variable. Please contact the author.")
+    sys.exit()
 
 GLOBAL_PARAMETER_PATTERN = re.compile('(\$\{([^\}]+)\})')
 # schema is a dict object reading from yaml
@@ -45,7 +58,7 @@ class LastApi:
   def __init__(self, api_name):
     api_definition_file = "{0}.yaml".format(api_name)
     api_parameters_file = "{0}-params.yaml".format(api_name)
-    c = Core(source_file=api_definition_file, schema_files=["schemas/schema.yaml"])
+    c = Core(source_file=api_definition_file, schema_files=[determine_path() + "/schemas/schema.yaml"])
     c.validate(raise_exception=True)
     with open(api_parameters_file, 'r') as fp:
       params = yaml.load(fp)
