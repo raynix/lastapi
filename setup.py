@@ -11,6 +11,7 @@ setup(
   author_email="raynix@gmail.com",
   description="REST API defined as YAML and invoked with lastapi.",
   long_description=long_description,
+  long_description_content_type="text/markdown",
   url="https://github.com/raynix/lastapi",
   packages=['lastapi'],
   package_dir={ 'lastapi': 'lastapi' },
